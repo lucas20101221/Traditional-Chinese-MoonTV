@@ -1,4 +1,8 @@
+import { toSimplified } from '@/lib/translate';
+
+/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
 'use client';
+
 
 
 /* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
