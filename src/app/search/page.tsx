@@ -1,9 +1,7 @@
-import { toSimplified } from '@/lib/translate';
-
-pnpm add opencc-js
-/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
 'use client';
 
+
+/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
 import { ChevronUp, Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -15,6 +13,7 @@ import {
   getSearchHistory,
   subscribeToDataUpdates,
 } from '@/lib/db.client';
+import { toSimplified } from '@/lib/translate';
 import { SearchResult } from '@/lib/types';
 import { yellowWords } from '@/lib/yellow';
 
@@ -148,21 +147,15 @@ function SearchPageClient() {
     };
   }, []);
 
-  useEffect(() => {
-    // 当搜索参数变化时更新搜索状态
-    const query = searchParams.get('q');
-    if (query) {
-     const simplified = toSimplified(query);
+(async () => {
+  const simplified = await toSimplified(query);
 
-     setSearchQuery(query); // 顯示原輸入
-     fetchSearchResults(simplified); // 用簡體搜尋
+  setSearchQuery(query);
+  fetchSearchResults(simplified);
 
-     addSearchHistory(query);
-}
-    } else {
-      setShowResults(false);
-    }
-  }, [searchParams]);
+  addSearchHistory(query);
+})();
+
 
   const fetchSearchResults = async (query: string) => {
     try {
@@ -216,25 +209,25 @@ function SearchPageClient() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
+
+
+const handleSearch = async (e: React.FormEvent) => {
   e.preventDefault();
   const trimmed = searchQuery.trim().replace(/\s+/g, ' ');
   if (!trimmed) return;
 
-  const simplified = toSimplified(trimmed);
+  const simplified = await toSimplified(trimmed);
 
-  // 輸入框仍顯示繁體
   setSearchQuery(trimmed);
   setIsLoading(true);
   setShowResults(true);
 
-  // 用簡體進行搜尋
   router.push(`/search?q=${encodeURIComponent(simplified)}`);
   fetchSearchResults(simplified);
-
-  // 搜尋歷史仍保存繁體
   addSearchHistory(trimmed);
 };
+
+
 
 
   // 返回顶部功能
