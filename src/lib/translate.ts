@@ -1,24 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-var-requires */
+let converter: ((text: string) => string) | null = null;
 
-let converter: any;
+export async function toSimplified(text: string): Promise<string> {
+  if (!text) return text;
 
-function getConverter() {
-  if (!converter) {
-    // 使用 require 避免 SSR build 錯
-    const OpenCC = require('opencc-js');
-    const lib = OpenCC.default ?? OpenCC;
-    converter = lib.Converter({ from: 'tw', to: 'cn' });
-  }
-  return converter;
-}
-
-export function toSimplified(text: string): string {
   try {
-    const c = getConverter();
-    return c(text);
-  } catch {
-    // Edge 或 build 時失敗 → 直接回傳原字串
-    return text;
+    if (!converter) {
+      // 動態載入，避免 Cloudflare / Edge 在 build 時炸掉
+      const mod: any = await import('opencc-js');
+
+      const OpenCC = mod.default ?? mod;
+      if (!OpenCC?.Converter) {
+        console.warn('[opencc] Converter not found, return original text');
+        return text;
+      }
+
+      converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
+    }
+
+    return converter(text);
+  } catch (err) {
+    console.error('[opencc] failed, fallback original text', err);
+    return text; // 失敗時安全回傳原字串
   }
 }
