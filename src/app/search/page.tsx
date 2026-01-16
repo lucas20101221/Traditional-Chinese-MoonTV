@@ -1,11 +1,7 @@
-import { toSimplified } from '@/lib/translate';
-
-/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
 'use client';
 
-
-
 /* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
+
 import { ChevronUp, Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -17,12 +13,14 @@ import {
   getSearchHistory,
   subscribeToDataUpdates,
 } from '@/lib/db.client';
+
 import { toSimplified } from '@/lib/translate';
 import { SearchResult } from '@/lib/types';
 import { yellowWords } from '@/lib/yellow';
 
 import PageLayout from '@/components/PageLayout';
 import VideoCard from '@/components/VideoCard';
+
 
 function SearchPageClient() {
   // 搜索历史
