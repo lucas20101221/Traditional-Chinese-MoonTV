@@ -111,6 +111,7 @@ function SearchPageClient() {
       }
     );
 
+
     // 获取滚动位置的函数 - 专门针对 body 滚动
     const getScrollTop = () => {
       return document.body.scrollTop || 0;
@@ -148,15 +149,18 @@ function SearchPageClient() {
       document.body.removeEventListener('scroll', handleScroll);
     };
   }, []);
+  
+  useEffect(() => {
+    const query = searchParams.get('q');
+    if (!query) return;
 
-(async () => {
-  const simplified = await toSimplified(query);
-
-  setSearchQuery(query);
-  fetchSearchResults(simplified);
-
-  addSearchHistory(query);
-})();
+    (async () => {
+      const simplified = await toSimplified(query);
+      setSearchQuery(query);
+      fetchSearchResults(simplified);
+      addSearchHistory(query);
+    })();
+  }, [searchParams]);
 
 
   const fetchSearchResults = async (query: string) => {
