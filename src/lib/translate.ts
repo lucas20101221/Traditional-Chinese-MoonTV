@@ -1,5 +1,4 @@
 // src/lib/translate.ts
-// 簡單中→繁轉換
 
 const map: Record<string, string> = {
   汉: '漢',
@@ -24,6 +23,6 @@ export function toTW(text: string): string {
 }
 
 export async function toSimplified(text: string): Promise<string> {
-  // 這裡直接回傳原文，或你可以自己加簡化 Map
+  // 直接回傳原文，避免 build 錯誤
   return text;
 }
