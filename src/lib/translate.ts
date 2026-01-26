@@ -1,25 +1,23 @@
-let converter: ((text: string) => string) | null = null;
+// src/lib/translate.ts
 
-export async function toSimplified(text: string): Promise<string> {
-  if (!text) return text;
+const map: Record<string, string> = {
+  汉: '漢',
+  马: '馬',
+  门: '門',
+  国: '國',
+  车: '車',
+  云: '雲',
+  龙: '龍',
+  后: '後',
+  发: '發',
+  台: '臺',
+  面: '麵',
+};
 
-  try {
-    if (!converter) {
-      // 動態載入，避免 Cloudflare / Edge 在 build 時炸掉
-      const mod: any = await import('opencc-js');
-
-      const OpenCC = mod.default ?? mod;
-      if (!OpenCC?.Converter) {
-        console.warn('[opencc] Converter not found, return original text');
-        return text;
-      }
-
-      converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
-    }
-
-    return converter(text);
-  } catch (err) {
-    console.error('[opencc] failed, fallback original text', err);
-    return text; // 失敗時安全回傳原字串
+export function toTW(text: string): string {
+  let result = '';
+  for (const ch of text) {
+    result += map[ch] || ch;
   }
+  return result;
 }
